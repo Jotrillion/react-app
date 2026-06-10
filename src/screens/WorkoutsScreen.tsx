@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useHealth, Workout } from '../context/HealthContext';
 
 export const WorkoutsScreen: React.FC = () => {
@@ -47,7 +47,7 @@ export const WorkoutsScreen: React.FC = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Workout Routines</Text>
 
       <View style={styles.inputSection}>
@@ -79,14 +79,9 @@ export const WorkoutsScreen: React.FC = () => {
       {workouts.length === 0 ? (
         <Text style={styles.emptyText}>No workouts yet. Start by adding one!</Text>
       ) : (
-        <FlatList
-          data={workouts}
-          renderItem={renderWorkout}
-          keyExtractor={(item) => item.id}
-          scrollEnabled={false}
-        />
+        workouts.map((workout) => renderWorkout({ item: workout }))
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -95,6 +90,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
     padding: 16,
+    paddingBottom: 100,
   },
   title: {
     fontSize: 24,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useHealth, DietEntry } from '../context/HealthContext';
 
 export const DietScreen: React.FC = () => {
@@ -57,7 +57,7 @@ export const DietScreen: React.FC = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Diet Tracking</Text>
 
       <View style={styles.statsCard}>
@@ -110,14 +110,9 @@ export const DietScreen: React.FC = () => {
       {dietEntries.length === 0 ? (
         <Text style={styles.emptyText}>No meals logged yet. Start tracking!</Text>
       ) : (
-        <FlatList
-          data={dietEntries}
-          renderItem={renderEntry}
-          keyExtractor={(item) => item.id}
-          scrollEnabled={false}
-        />
+        dietEntries.map((entry) => renderEntry({ item: entry }))
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -126,6 +121,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
     padding: 16,
+    paddingBottom: 100,
   },
   title: {
     fontSize: 24,

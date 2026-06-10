@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useHealth, HealthStats } from '../context/HealthContext';
 
 export const StatsScreen: React.FC = () => {
@@ -58,7 +58,7 @@ export const StatsScreen: React.FC = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Health Statistics</Text>
 
       {latestStats && (
@@ -124,14 +124,9 @@ export const StatsScreen: React.FC = () => {
       {healthStats.length === 0 ? (
         <Text style={styles.emptyText}>No stats logged yet. Start tracking!</Text>
       ) : (
-        <FlatList
-          data={[...healthStats].reverse()}
-          renderItem={renderStat}
-          keyExtractor={(item, index) => index.toString()}
-          scrollEnabled={false}
-        />
+        [...healthStats].reverse().map((stat, index) => renderStat({ item: stat }))
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -140,6 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
     padding: 16,
+    paddingBottom: 100,
   },
   title: {
     fontSize: 24,
