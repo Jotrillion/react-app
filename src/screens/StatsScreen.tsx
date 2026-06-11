@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { useHealth, HealthStats } from '../context/HealthContext';
+import { useHealth } from '../context/HealthContext';
+import { HealthStats } from '../models/HealthStats';
 
 export const StatsScreen: React.FC = () => {
-  const { healthStats, addHealthStats } = useHealth();
+  const { currentUser, healthStats, addHealthStats } = useHealth();
   const [weight, setWeight] = useState('');
   const [steps, setSteps] = useState('');
   const [water, setWater] = useState('');
@@ -15,12 +16,18 @@ export const StatsScreen: React.FC = () => {
       return;
     }
 
-    addHealthStats({
-      weight: parseFloat(weight),
-      steps: parseInt(steps, 10),
-      water: parseFloat(water),
-      sleep: parseFloat(sleep),
-    });
+    if (!currentUser) {
+      Alert.alert('Error', 'No user selected');
+      return;
+    }
+
+    addHealthStats(
+      currentUser.id,
+      parseFloat(weight),
+      parseInt(steps, 10),
+      parseFloat(water),
+      parseFloat(sleep)
+    );
 
     setWeight('');
     setSteps('');
@@ -28,7 +35,7 @@ export const StatsScreen: React.FC = () => {
     setSleep('');
   };
 
-  const latestStats = healthStats.length > 0 ? healthStats[healthStats.length - 1] : null;
+  const latestStats = healthStats.length > 0 ? healthStats[0] : null;
   const avgSleep = healthStats.length > 0
     ? (healthStats.reduce((sum, s) => sum + s.sleep, 0) / healthStats.length).toFixed(1)
     : '0';

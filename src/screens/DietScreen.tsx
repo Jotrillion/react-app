@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { useHealth, DietEntry } from '../context/HealthContext';
+import { useHealth } from '../context/HealthContext';
+import { DietEntry } from '../models/DietEntry';
 
 export const DietScreen: React.FC = () => {
-  const { dietEntries, addDietEntry, deleteDietEntry } = useHealth();
+  const { currentUser, dietEntries, addDietEntry, deleteDietEntry } = useHealth();
   const [meal, setMeal] = useState('');
   const [calories, setCalories] = useState('');
   const [protein, setProtein] = useState('');
   const [carbs, setCarbs] = useState('');
   const [fat, setFat] = useState('');
+  const [mealType, setMealType] = useState('breakfast');
 
   const handleAddEntry = () => {
     if (!meal || !calories || !protein || !carbs || !fat) {
@@ -16,14 +18,20 @@ export const DietScreen: React.FC = () => {
       return;
     }
 
-    addDietEntry({
+    if (!currentUser) {
+      Alert.alert('Error', 'No user selected');
+      return;
+    }
+
+    addDietEntry(
+      currentUser.id,
       meal,
-      calories: parseInt(calories, 10),
-      protein: parseFloat(protein),
-      carbs: parseFloat(carbs),
-      fat: parseFloat(fat),
-      date: new Date().toISOString().split('T')[0],
-    });
+      mealType,
+      parseInt(calories, 10),
+      parseFloat(protein),
+      parseFloat(carbs),
+      parseFloat(fat)
+    );
 
     setMeal('');
     setCalories('');

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { useHealth, Workout } from '../context/HealthContext';
+import { useHealth } from '../context/HealthContext';
+import { Workout } from '../models/Workout';
 
 export const WorkoutsScreen: React.FC = () => {
-  const { workouts, addWorkout, deleteWorkout } = useHealth();
+  const { currentUser, workouts, addWorkout, deleteWorkout } = useHealth();
   const [workoutName, setWorkoutName] = useState('');
   const [duration, setDuration] = useState('');
   const [calories, setCalories] = useState('');
+  const [category, setCategory] = useState('cardio');
+  const [intensity, setIntensity] = useState('medium');
 
   const handleAddWorkout = () => {
     if (!workoutName || !duration || !calories) {
@@ -14,12 +17,19 @@ export const WorkoutsScreen: React.FC = () => {
       return;
     }
 
-    addWorkout({
-      name: workoutName,
-      duration: parseInt(duration, 10),
-      calories: parseInt(calories, 10),
-      date: new Date().toISOString().split('T')[0],
-    });
+    if (!currentUser) {
+      Alert.alert('Error', 'No user selected');
+      return;
+    }
+
+    addWorkout(
+      currentUser.id,
+      workoutName,
+      category,
+      parseInt(duration, 10),
+      parseInt(calories, 10),
+      intensity
+    );
 
     setWorkoutName('');
     setDuration('');
